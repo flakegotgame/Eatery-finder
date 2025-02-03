@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+const RestaurantDetails = () => {
+  const { id } = useParams(); // Retrieve the restaurant id from the URL
+  const [restaurant, setRestaurant] = useState(null); // To store restaurant details
+  const [loading, setLoading] = useState(true); // To handle loading state
+  const [error, setError] = useState(null); // To handle errors
+
+  useEffect(() => {
+    // Fetch restaurant details using the id
+    const fetchRestaurantDetails = async () => {
+      try {
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+        const data = await response.json();
+
+        if (data.meals) {
+          setRestaurant(data.meals[0]); // Store the fetched data
+        } else {
+          setError('Restaurant details not found');
+        }
+      } catch (err) {
+        setError('Failed to fetch restaurant details');
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchRestaurantDetails(); // Call the function to fetch details
+  }, [id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return (
+    <div className="restaurant-details">
+      <h2>{restaurant.strMeal}</h2>
+      <img src={restaurant.strMealThumb} alt={restaurant.strMeal} />
+      <p>{restaurant.strInstructions}</p>
+      <p><strong>Category:</strong> {restaurant.strCategory}</p>
+      <p><strong>Cuisine:</strong> {restaurant.strArea}</p>
+    </div>
+  );
+};
+
+export default RestaurantDetails;

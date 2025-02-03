@@ -1,0 +1,29 @@
+.home-page {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .home-page h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .home-page p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .view-restaurants-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .view-restaurants-button:hover {
+    background-color: #0056b3;
+  }
+  
