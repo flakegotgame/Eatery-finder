@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const RestaurantDetails = () => {
-  const { id } = useParams(); // Retrieve the restaurant id from the URL
-  const [restaurant, setRestaurant] = useState(null); // To store restaurant details
-  const [loading, setLoading] = useState(true); // To handle loading state
-  const [error, setError] = useState(null); // To handle errors
+  const { id } = useParams(); 
+  const [restaurant, setRestaurant] = useState(null); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     // Fetch restaurant details using the id
@@ -15,18 +15,18 @@ const RestaurantDetails = () => {
         const data = await response.json();
 
         if (data.meals) {
-          setRestaurant(data.meals[0]); // Store the fetched data
+          setRestaurant(data.meals[0]); 
         } else {
           setError('Restaurant details not found');
         }
       } catch (err) {
         setError('Failed to fetch restaurant details');
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false); 
       }
     };
 
-    fetchRestaurantDetails(); // Call the function to fetch details
+    fetchRestaurantDetails(); 
   }, [id]);
 
   if (loading) {

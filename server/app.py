@@ -6,9 +6,8 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
-SECRET_KEY = "your-secret-key"  # Replace with a more secure secret key
+SECRET_KEY = "your-secret-key"  
 
-# Mock user database (replace with your actual DB)
 users = [{"email": "test@example.com", "password": "password"}]
 
 # Sample restaurant data
@@ -60,13 +59,10 @@ def get_restaurants():
         return jsonify({'message': 'Unauthorized: No token found'}), 401
 
     try:
-        # Extract token from the 'Bearer <token>' format
         token = token.split(" ")[1]
 
-        # Decode the JWT token
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
-        # If decoding is successful, return the restaurant data
         return jsonify(restaurants), 200
 
     except jwt.ExpiredSignatureError:

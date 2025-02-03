@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
-import './App.css'; // Import App.css for all styling
+import './App.css'; 
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import RestaurantDetails from './pages/RestaurantDetail';
@@ -16,10 +16,15 @@ const App = () => {
   }, [token]);
 
   const fetchRestaurants = () => {
-    // Fetching data from The Meal DB API for restaurant-like data
-    fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=') // A simple search query
+    fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=') 
       .then((response) => response.json())
-      .then((data) => setRestaurants(data.meals))
+      .then((data) => {
+        if (data && data.meals && Array.isArray(data.meals)) {
+          setRestaurants(data.meals);
+        } else {
+          setRestaurants([]);
+        }
+      })
       .catch((error) => console.error('Error fetching restaurants:', error));
   };
 
@@ -47,13 +52,13 @@ const App = () => {
   );
 };
 
-const RestaurantList = ({ restaurants }) => {
-  return (
-    <div className="restaurant-list">
-      {restaurants?.map((restaurant) => (
+const RestaurantList = ({ restaurants }) => (
+  <div className="restaurant-list">
+    {restaurants.length ? (
+      restaurants.map((restaurant) => (
         <div className="restaurant-card" key={restaurant.idMeal}>
           <img
-            src={restaurant.strMealThumb || "https://via.placeholder.com/200"} // Placeholder image or actual meal image
+            src={restaurant.strMealThumb || "https://via.placeholder.com/200"}
             alt={restaurant.strMeal}
             className="restaurant-img"
           />
@@ -63,10 +68,11 @@ const RestaurantList = ({ restaurants }) => {
             More Info
           </Link>
         </div>
-      ))}
-    </div>
-  );
-};
+      ))
+    ) : (
+      <p>No restaurants available</p>
+    )}
+  </div>
+);
 
 export default App;
-
