@@ -1,37 +1,22 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import jwt
 import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
+from models import db, User, Restaurant
 
 app = Flask(__name__)
-CORS(app)
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Using SQLite (Change for production)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # Change this for production
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "your-default-secret-key")
 
 # Initialize database
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
-
-# Define Models
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-
-class Restaurant(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(255))
-    address = db.Column(db.String(200))
-    phone = db.Column(db.String(50))
-    website = db.Column(db.String(200))
 
 # Authentication Routes
 @app.route('/register', methods=['POST'])
@@ -69,6 +54,7 @@ def login():
 @app.route('/restaurants', methods=['GET'])
 def get_restaurants():
     token = request.headers.get('Authorization')
+
     if not token:
         return jsonify({'message': 'Unauthorized: No token found'}), 401
 
@@ -77,8 +63,8 @@ def get_restaurants():
         jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
 
         restaurants = Restaurant.query.all()
-        restaurants_data = [{'id': r.id, 'name': r.name, 'description': r.description,
-                             'address': r.address, 'phone': r.phone, 'website': r.website} for r in restaurants]
+        # Serialize restaurants to JSON format
+        restaurants_data = [r.to_dict() for r in restaurants]
 
         return jsonify(restaurants_data), 200
 
